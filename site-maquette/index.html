@@ -177,7 +177,7 @@ section{padding-block:88px;scroll-margin-top:70px}
 .recap{display:grid;gap:6px;background:var(--paper-2);border-radius:14px;padding:12px 14px;margin:2px 0 14px;font-size:14.5px}
 .recap div{display:flex;justify-content:space-between;gap:10px}
 .recap span{color:var(--muted)}
-.recap b{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.recap b{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap}
 .recap .acompte{border-top:1px dashed var(--lilac);padding-top:8px;margin-top:2px}
 .recap .acompte b{color:var(--violet-deep);font-size:16px}
 .agree{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin-bottom:14px;cursor:pointer}
@@ -283,6 +283,92 @@ footer a:hover{text-decoration:underline}
 .add-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .lb-del{border:1px solid var(--line);background:#fff;color:#b23a52;border-radius:999px;padding:8px 12px;font-size:13px;cursor:pointer}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ticker div{animation:none}.rise,.rise.pre{transition:none;transform:none}.btn:hover,.ph:hover{transform:none}}
+/* ===== Téléphone : version compacte ===== */
+@media (max-width:860px){
+  section{padding-block:32px}
+  .page-top{padding-top:26px}
+  h2{font-size:31px}
+  .sec-head{margin-bottom:16px}
+  .sec-head p{display:none}
+  .eyebrow{font-size:11.5px}
+  /* Accueil */
+  .hero .wrap{padding-block:26px 24px}
+  .hero h1{font-size:44px;margin:10px 0 12px}
+  .hero p{font-size:16px;margin-bottom:18px}
+  .ctas{flex-wrap:nowrap;gap:8px}
+  .ctas .btn{padding:12px 14px;font-size:14px;white-space:nowrap}
+  .wa-direct{margin-top:12px;font-size:14px}
+  .hero-logo{margin-top:16px;font-size:13px}
+  .hero-logo img{width:44px;height:44px;border-width:2px}
+  .ticker{font-size:18px;padding-block:8px}
+  .steps{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;border-top:0;margin-inline:-20px;padding:0 20px 4px;scrollbar-width:none}
+  .step,.step+.step{flex:0 0 76%;scroll-snap-align:start;border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff}
+  .step b{font-size:32px;margin-bottom:6px}
+  .step h3{font-size:20px;margin-bottom:4px}
+  .step p{font-size:14px}
+  #decouvrir{padding-bottom:28px}
+  .teasers{gap:8px}
+  .teaser{flex-direction:row;align-items:center;padding:14px 16px;gap:12px}
+  .teaser p,.teaser .eyebrow{display:none}
+  .teaser h3{font-size:19px;flex:1}
+  .teaser b{margin:0;padding:0;font-size:0}
+  .teaser b::after{content:"→";font-size:20px}
+  /* Tarifs */
+  .menu-filter,.gal-filter{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-bottom:6px}
+  .menu-filter .chip,.gal-filter .chip{white-space:nowrap;padding:6px 12px;font-size:13.5px}
+  .item{padding:11px 12px}
+  .item h3{font-size:19px}
+  .item p{display:none}
+  .item .price{font-size:17px}
+  .tag{font-size:9.5px;padding:1px 6px}
+  .thumbs-row{margin-top:6px}
+  .thumbs-row img{width:34px;height:34px}
+  .tarif-grid{gap:20px}
+  .sim{padding:18px;border-radius:20px}
+  .sim>p{display:none}
+  .sim h3{font-size:22px;margin-bottom:12px}
+  .field{margin-bottom:10px}
+  .total b{font-size:26px}
+  /* Infos */
+  .zones{gap:12px}
+  .zones p{display:none}
+  .zones .chip{padding:6px 12px;font-size:13.5px}
+  #politique{padding-top:8px}
+  .pol{gap:8px}
+  .pcard{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:12px;padding:12px 14px;border-radius:16px;cursor:pointer}
+  .pcard .ico{width:34px;height:34px;margin:0;border-radius:10px}
+  .pcard .ico svg{width:19px;height:19px}
+  .pcard h3{font-size:19px;margin:0}
+  .pcard::after{content:"+";color:var(--violet);font-size:22px;line-height:1}
+  .pcard.big::after{color:var(--lilac)}
+  .pcard.open::after{content:"–"}
+  .pcard ul{display:none;grid-column:1/-1;margin-top:10px}
+  .pcard.open ul{display:grid}
+  .pcard li{font-size:14px}
+  .merci{padding:14px 16px;border-radius:16px}
+  .merci strong{font-size:20px}
+  .merci span{display:none}
+  /* Réserver */
+  .book .wrap{gap:16px}
+  .book h2{margin:8px 0 0}
+  .book > .wrap > div > p{display:none}
+  .contacts{margin-top:14px;gap:6px}
+  .contacts .row{padding:8px 12px;border-radius:12px}
+  .contacts .label{font-size:10.5px}
+  .contacts .val{font-size:15px}
+  .contacts .btns button{display:none}
+  .form{padding:16px;border-radius:20px}
+  .form h3{display:none}
+  .form .two{grid-template-columns:1fr 1fr;gap:10px}
+  .recap{font-size:13.5px;padding:10px 12px;margin-bottom:10px}
+  .agree{font-size:13.5px;margin-bottom:10px}
+  footer .wrap{font-size:12.5px;padding-block:16px}
+}
+.msg summary{cursor:pointer;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;list-style:none}
+.msg summary::-webkit-details-marker{display:none}
+.msg summary::after{content:" +";color:var(--violet)}
+.msg[open] summary::after{content:" –"}
+.msg .preview{margin-top:8px}
 </style>
 
 <div class="proto">Maquette à valider · prix, zones et textes d'exemple</div>
@@ -394,7 +480,6 @@ footer a:hover{text-decoration:underline}
   </div>
 
   <div class="page" data-page="infos" hidden>
-  <span id="infos"></span>
   <section id="zones" class="page-top">
     <div class="wrap zones rise">
       <div>
@@ -410,7 +495,7 @@ footer a:hover{text-decoration:underline}
     <div class="wrap">
       <div class="sec-head rise"><div><span class="eyebrow">Politique BSB LMA</span><h2>Avant <em>de réserver</em></h2></div><p>Quelques règles simples pour que chaque rendez-vous se passe bien, pour vous comme pour moi.</p></div>
       <div class="pol rise">
-        <article class="pcard big"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2"/></svg></div><h3>Réservation, report &amp; annulation</h3><ul>
+        <article class="pcard big open"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2"/></svg></div><h3>Réservation, report &amp; annulation</h3><ul>
           <li>Les créneaux sont réservables à l'avance.</li>
           <li>Un <b>acompte de 50 %</b> est requis pour confirmer le rendez-vous. Aucun rendez-vous n'est pris en compte sans acompte.</li>
           <li>Réservation <b>la veille ou le jour J : +2 000 FCFA</b>.</li>
@@ -457,10 +542,10 @@ footer a:hover{text-decoration:underline}
         <div class="field"><span>Moment de la journée</span><div class="seg" id="bSlot"></div></div>
         <div class="two">
           <label class="field" for="bHair"><span>Vos cheveux</span><select id="bHair"></select></label>
-          <label class="field" for="bSens"><span>Sensibilité capillaire</span><input id="bSens" placeholder="Facultatif"></label>
+          <label class="field" for="bSens"><span>Sensibilité</span><input id="bSens" placeholder="Facultatif"></label>
         </div>
         <div class="recap" id="bRecap" aria-live="polite"></div>
-        <div class="field"><span>Votre message</span><div class="preview" id="bPreview" aria-live="polite"></div></div>
+        <details class="field msg" id="msgBox"><summary>Voir le message WhatsApp</summary><div class="preview" id="bPreview" aria-live="polite"></div></details>
         <label class="agree" for="bAgree"><input type="checkbox" id="bAgree"><span>J'ai lu et j'accepte la <a href="#politique">politique BSB LMA</a> (acompte de 50 % non remboursable, 20 min d'attente maximum).</span></label>
         <div class="actions">
           <a class="btn btn-violet locked" id="bSend" href="https://wa.me/2250709314756" target="_blank" rel="noopener" aria-disabled="true">Envoyer sur WhatsApp</a>
@@ -622,7 +707,7 @@ function updateMsg(){
   const q=quote(),ex=extras();
   $('#bRecap').innerHTML=`<div><span>${esc(STYLES[st.style].n)}</span><b>${money(q.lo-q.x)} – ${money(q.hi-q.x)}</b></div>`+
     ex.map(e=>`<div><span>${e[0]}</span><b>+ ${money(e[1])}</b></div>`).join('')+
-    `<div><span>Déplacement</span><b>selon le quartier</b></div><div class="acompte"><span>Acompte à verser (50 %)</span><b>${money(q.lo/2)} – ${money(q.hi/2)}</b></div>`;
+    `<div><span>Déplacement</span><b>selon le quartier</b></div><div class="acompte"><span>Acompte (50 %)</span><b>${money(q.lo/2)} – ${money(q.hi/2)}</b></div>`;
   const m=message();$('#bPreview').textContent=m;$('#bSend').href='https://wa.me/2250709314756?text='+encodeURIComponent(m);
   const ok=$('#bAgree').checked;$('#bSend').classList.toggle('locked',!ok);$('#bSend').setAttribute('aria-disabled',String(!ok));
 }
@@ -676,11 +761,13 @@ function route(){
   document.querySelectorAll('.page').forEach(p=>p.hidden=p.dataset.page!==page);
   document.querySelectorAll('[data-nav]').forEach(a=>a.classList.toggle('on',a.dataset.nav===page));
   const el=document.getElementById(h);
-  if(el&&h!==page&&h!=='infos')el.scrollIntoView();else window.scrollTo(0,0);
+  if(el&&h!==page)el.scrollIntoView();else{window.scrollTo(0,0);requestAnimationFrame(()=>window.scrollTo(0,0))}
   if(page!==current&&page==='accueil')requestAnimationFrame(()=>{try{size();draw()}catch(e){}});
   current=page;
 }
 addEventListener('hashchange',route);
+if(innerWidth>860)$('#msgBox').open=true;
+document.addEventListener('click',e=>{const c=e.target.closest('.pcard');if(c&&innerWidth<=860)c.classList.toggle('open')});
 /* Glissement doux à l'apparition (le contenu reste visible) */
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(!reduce&&'IntersectionObserver' in window){
