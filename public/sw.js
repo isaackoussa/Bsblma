@@ -1,5 +1,5 @@
 // Service worker : app utilisable hors connexion + affichage des notifications.
-const CACHE = 'lma-v1';
+const CACHE = 'lma-v2';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/assets/logo-lma.png', '/assets/icon-192.png', '/assets/icon-512.png'];
 
 self.addEventListener('install', e => {
