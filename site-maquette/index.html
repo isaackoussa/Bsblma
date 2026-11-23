@@ -364,6 +364,9 @@ footer a:hover{text-decoration:underline}
   .agree{font-size:13.5px;margin-bottom:10px}
   footer .wrap{font-size:12.5px;padding-block:16px}
 }
+.base-note{font-size:14.5px;color:var(--muted)}
+.base-note b{color:var(--violet-deep)}
+.place-tip{font-size:13px;color:var(--muted);margin:-2px 0 14px;background:var(--paper-2);border-radius:10px;padding:8px 10px}
 .msg summary{cursor:pointer;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;list-style:none}
 .msg summary::-webkit-details-marker{display:none}
 .msg summary::after{content:" +";color:var(--violet)}
@@ -483,9 +486,10 @@ footer a:hover{text-decoration:underline}
   <section id="zones" class="page-top">
     <div class="wrap zones rise">
       <div>
-        <span class="eyebrow">Zones desservies</span>
+        <span class="eyebrow">Je me déplace chez vous</span>
         <h2 style="margin-top:12px">Partout <em>dans Abidjan</em></h2>
-        <p>Touchez votre quartier pour l'ajouter à votre demande. Les frais de déplacement dépendent de votre lieu d'habitation. Après 17 h, un supplément de 2 000 F s'applique (embouteillages).</p>
+        <p>Choisissez votre commune, puis précisez votre quartier et un point de repère dans la demande. Les frais de déplacement dépendent de votre lieu d'habitation. Après 17 h, +2 000 F (embouteillages).</p>
+        <p class="base-note">Basée à <b>Flora · Légré</b></p>
       </div>
       <ul class="chips" id="zoneList"></ul>
     </div>
@@ -536,9 +540,12 @@ footer a:hover{text-decoration:underline}
         <div class="two">
           <label class="field" for="bName"><span>Prénom</span><input id="bName" placeholder="Ex. Aïcha" autocomplete="given-name"></label>
           <label class="field" for="bStyle"><span>Coiffure</span><select id="bStyle"></select></label>
-          <label class="field" for="bZone"><span>Quartier</span><select id="bZone"></select></label>
+          <label class="field" for="bZone"><span>Commune</span><select id="bZone"></select></label>
           <label class="field" for="bDate"><span>Date souhaitée</span><input id="bDate" type="date"></label>
         </div>
+        <label class="field" for="bPlace"><span>Quartier précis</span><input id="bPlace" placeholder="Ex. Angré 8e tranche, Riviera Palmeraie, Cité des Arts…" autocomplete="address-level3"></label>
+        <label class="field" for="bMark"><span>Point de repère</span><input id="bMark" placeholder="Ex. après la pharmacie, immeuble beige, portail bleu…"></label>
+        <p class="place-tip">Astuce : après l'envoi, partagez aussi votre position WhatsApp (📎 › Position) pour que LMA vous trouve sans détour.</p>
         <div class="field"><span>Moment de la journée</span><div class="seg" id="bSlot"></div></div>
         <div class="two">
           <label class="field" for="bHair"><span>Vos cheveux</span><select id="bHair"></select></label>
@@ -613,7 +620,7 @@ const STYLES=[
 const LENS=[['Épaules',1],['Milieu du dos',1.25],['Taille',1.5]];
 const SIZES=[['Grosses',.85],['Moyennes',1],['Fines',1.3]];
 const HAIR=5000;
-const ZONES=['Flora · Légré','Cocody','Riviera','Angré','Palmeraie','Deux-Plateaux','Plateau','Marcory','Koumassi','Treichville','Yopougon','Abobo','Bingerville'];
+const ZONES=['Cocody','Bingerville','Plateau','Marcory','Koumassi','Treichville','Port-Bouët','Adjamé','Attécoubé','Yopougon','Abobo','Anyama','Songon','Autre commune'];
 const GAL=[['Boho knotless','Riviera',1],['Invisible locks','Angré'],['French curl braids','Marcory'],['Box braids','Cocody'],['Nattes collées','Yopougon'],['Fausses locks','Bingerville',1]];
 const SLOTS=['Matin','Après-midi','Après 17 h'];
 const HAIRS=['Courts','Mi-longs','Longs','Volumineux'];
@@ -674,7 +681,7 @@ $('#photoIn').addEventListener('change',async e=>{
 });
 function refreshPhotos(){renderGal();renderMenu();renderSim()}
 /* Zones + formulaire */
-function renderZones(){$('#zoneList').innerHTML=ZONES.map((z,i)=>`<li><button type="button" class="chip${i===0?' base':''}" data-zone="${i}" aria-pressed="${i===st.zone}">${z}</button></li>`).join('')}
+function renderZones(){$('#zoneList').innerHTML=ZONES.map((z,i)=>`<li><button type="button" class="chip" data-zone="${i}" aria-pressed="${i===st.zone}">${z}</button></li>`).join('')}
 function renderForm(){
   $('#bStyle').innerHTML=opts(STYLES.map(s=>s.n),st.style);
   $('#bZone').innerHTML=opts(ZONES,st.zone);
@@ -696,7 +703,7 @@ function message(){
   const lines=[`Bonjour LMA${name?', c\'est '+name:''} !`,
     `Je voudrais des ${STYLES[st.style].n} (longueur : ${LENS[st.len][0].toLowerCase()}${st.hair?', mèches fournies par vous':''}).`,
     `Mes cheveux : ${HAIRS[st.hairType].toLowerCase()}${sens?' · sensibilité : '+sens:''}.`,
-    `Quartier : ${ZONES[st.zone]}`,
+    `Lieu : ${ZONES[st.zone]}, ${$('#bPlace').value.trim()||'(quartier à préciser)'}${$('#bMark').value.trim()?' · repère : '+$('#bMark').value.trim():''}`,
     `Date : ${date}, ${SLOTS[st.slot].toLowerCase()}.`,
     `Estimation du site : ${money(q.lo)} – ${money(q.hi)} (hors déplacement)${q.x?', suppléments inclus':''}.`,
     `Je suis prête à verser l'acompte de 50 % pour confirmer.`];
@@ -709,7 +716,7 @@ function updateMsg(){
     ex.map(e=>`<div><span>${e[0]}</span><b>+ ${money(e[1])}</b></div>`).join('')+
     `<div><span>Déplacement</span><b>selon le quartier</b></div><div class="acompte"><span>Acompte (50 %)</span><b>${money(q.lo/2)} – ${money(q.hi/2)}</b></div>`;
   const m=message();$('#bPreview').textContent=m;$('#bSend').href='https://wa.me/2250709314756?text='+encodeURIComponent(m);
-  const ok=$('#bAgree').checked;$('#bSend').classList.toggle('locked',!ok);$('#bSend').setAttribute('aria-disabled',String(!ok));
+  const ok=$('#bAgree').checked&&!!$('#bPlace').value.trim();$('#bSend').classList.toggle('locked',!ok);$('#bSend').setAttribute('aria-disabled',String(!ok));
 }
 function syncAll(){renderMenu();renderSim();renderForm()}
 
@@ -723,7 +730,7 @@ document.addEventListener('click',e=>{
   if(ds.slot!==undefined){st.slot=+ds.slot;renderForm();return}
   if(ds.gf){st.gal=ds.gf;renderGal();return}
   if(ds.ph!==undefined){openLb(+ds.ph);return}
-  if(ds.zone!==undefined){st.zone=+ds.zone;renderZones();renderForm();toast('Quartier ajouté à votre demande');return}
+  if(ds.zone!==undefined){st.zone=+ds.zone;renderZones();renderForm();toast(ZONES[st.zone]+' : précisez le quartier dans « Réserver »');return}
   if(ds.copy){const txt=document.getElementById(ds.copy).textContent;copy(txt);return}
   if(t.id==='simBook'){$('#bStyle').value=st.style;updateMsg()}
   if(t.id==='bCopy'){copy(message());return}
@@ -743,10 +750,12 @@ $('#simStyle').addEventListener('change',e=>{st.style=+e.target.value;syncAll()}
 $('#simHair').addEventListener('change',e=>{st.hair=e.target.checked;renderSim();updateMsg()});
 $('#bStyle').addEventListener('change',e=>{st.style=+e.target.value;renderMenu();renderSim();updateMsg()});
 $('#bZone').addEventListener('change',e=>{st.zone=+e.target.value;renderZones();updateMsg()});
-['#bName','#bDate','#bSens'].forEach(s=>$(s).addEventListener('input',updateMsg));
+['#bName','#bDate','#bSens','#bPlace','#bMark'].forEach(s=>$(s).addEventListener('input',updateMsg));
 $('#bAgree').addEventListener('change',updateMsg);
 $('#bHair').addEventListener('change',e=>{st.hairType=+e.target.value;updateMsg()});
-$('#bSend').addEventListener('click',e=>{if(!$('#bAgree').checked){e.preventDefault();toast('Cochez la politique BSB LMA pour continuer');$('#bAgree').focus()}});
+$('#bSend').addEventListener('click',e=>{
+  if(!$('#bPlace').value.trim()){e.preventDefault();toast('Précisez votre quartier');$('#bPlace').focus();return}
+  if(!$('#bAgree').checked){e.preventDefault();toast('Cochez la politique BSB LMA pour continuer');$('#bAgree').focus()}});
 $('#bookForm').addEventListener('submit',e=>e.preventDefault());
 function copy(txt){try{navigator.clipboard.writeText(txt).then(()=>toast('Copié'),()=>toast('Sélectionnez le texte pour le copier'))}catch(err){toast('Sélectionnez le texte pour le copier')}}
 try{const d=new Date();d.setDate(d.getDate()+1);$('#bDate').min=new Date().toISOString().slice(0,10)}catch(e){}
