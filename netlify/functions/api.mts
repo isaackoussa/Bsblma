@@ -30,6 +30,59 @@ export default async (req: Request, context: Context) => {
   const [route, id] = parts;
   const s = store();
 
+  // ---------- Routes publiques (site vitrine) ----------
+  if (route === "public") {
+    const [, what, pid] = parts;
+    // Tarifs + photos choisies par LMA (aucune donnée cliente n'est renvoyée).
+    if (what === "catalog" && req.method === "GET") {
+      const data = (await s.get("data", { type: "json" })) as any;
+      const styles = Array.isArray(data?.siteStyles)
+        ? data.siteStyles.map((x: any) => ({ n: String(x.n ?? ""), p: Number(x.p) || 0 })).filter((x: any) => x.n)
+        : null;
+      const photos = Array.isArray(data?.photos)
+        ? data.photos.filter((x: any) => x && x.site && x.synced !== false).map((x: any) => ({ id: String(x.id), style: String(x.prestation ?? "") }))
+        : [];
+      return new Response(JSON.stringify({ styles, photos }), {
+        headers: { "content-type": "application/json", "cache-control": "public, max-age=60" },
+      });
+    }
+    // Une photo publiée sur le site, servie comme image.
+    if (what === "photo" && pid && /^[a-z0-9]{4,32}$/i.test(pid) && req.method === "GET") {
+      const data = (await s.get("data", { type: "json" })) as any;
+      const ok = Array.isArray(data?.photos) && data.photos.some((x: any) => x && x.id === pid && x.site);
+      if (!ok) return json({ error: "not_found" }, 404);
+      const src = await s.get(`photos/${pid}`);
+      const m = src && /^data:(image\/[a-z+.-]+);base64,(.+)$/i.exec(src);
+      if (!m) return json({ error: "not_found" }, 404);
+      return new Response(Buffer.from(m[2], "base64"), {
+        headers: { "content-type": m[1], "cache-control": "public, max-age=3600" },
+      });
+    }
+    // Demande de rendez-vous envoyée depuis le site.
+    if (what === "booking" && req.method === "POST") {
+      const text = await req.text();
+      if (text.length > 4000) return json({ error: "too_large" }, 413);
+      let b: Record<string, unknown>;
+      try { b = JSON.parse(text); } catch { return json({ error: "bad_json" }, 400); }
+      const str = (k: string, max = 160) => String(b?.[k] ?? "").trim().slice(0, max);
+      const booking = {
+        name: str("name", 60), phone: str("phone", 30), style: str("style", 60), length: str("length", 30),
+        hairByLma: !!b?.hairByLma, hair: str("hair", 30), sens: str("sens", 160),
+        commune: str("commune", 40), place: str("place", 120), mark: str("mark", 160),
+        date: /^\d{4}-\d{2}-\d{2}$/.test(str("date", 10)) ? str("date", 10) : "",
+        slot: str("slot", 20), low: Number(b?.low) || 0, high: Number(b?.high) || 0,
+        createdAt: Date.now(),
+      };
+      if (!booking.name || !booking.phone || !booking.place) return json({ error: "missing_fields" }, 400);
+      const { blobs } = await s.list({ prefix: "requests/" });
+      if (blobs.length >= 300) return json({ error: "too_many" }, 429);
+      const rid = Date.now().toString(36) + randomBytes(4).toString("hex");
+      await s.setJSON(`requests/${rid}`, { id: rid, ...booking });
+      return json({ ok: true });
+    }
+    return json({ error: "not_found" }, 404);
+  }
+
   // État : la sauvegarde a-t-elle déjà été activée ?
   if (route === "status" && req.method === "GET") {
     const auth = await s.get("auth", { type: "json" });
@@ -67,6 +120,23 @@ export default async (req: Request, context: Context) => {
       const day = new Date().toISOString().slice(0, 10);
       context.waitUntil(s.set(`backups/${day}`, text));
       return json({ ok: true, updatedAt: data.updatedAt ?? null });
+    }
+  }
+
+  // Demandes reçues du site : l'app les importe puis les efface du serveur.
+  if (route === "requests") {
+    if (req.method === "GET" && !id) {
+      const { blobs } = await s.list({ prefix: "requests/" });
+      const list = [];
+      for (const b of blobs.slice(0, 100)) {
+        const r = await s.get(b.key, { type: "json" });
+        if (r) list.push(r);
+      }
+      return json({ requests: list });
+    }
+    if (req.method === "DELETE" && id && /^[a-z0-9]{4,40}$/i.test(id)) {
+      await s.delete(`requests/${id}`);
+      return json({ ok: true });
     }
   }
 
