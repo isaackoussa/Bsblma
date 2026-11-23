@@ -53,7 +53,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .nav ul a:hover{color:var(--fg)}
 .nav ul a.on{background:var(--lilac-50);color:var(--violet-deep)}
 .nav .btn{padding:10px 16px;font-size:14px}
-@media (max-width:860px){.nav ul{display:none}.nav .btn{margin-left:auto}}
+@media (max-width:860px){.nav ul{display:none}.nav .wa-nav{margin-left:auto}}
 @media (max-width:440px){.brand span{font-size:16px}.brand span i{display:block}}
 
 /* Accueil */
@@ -218,7 +218,18 @@ section{padding-block:88px;scroll-margin-top:70px}
 footer{background:var(--ink);color:var(--on-dark-muted);font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-block:24px}
 
-.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;box-shadow:0 12px 30px -10px rgba(74,38,144,.6);transition:transform .25s,opacity .25s}
+.fabs{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;gap:10px;align-items:center}
+.fab{box-shadow:0 12px 30px -10px rgba(74,38,144,.6);transition:transform .25s,opacity .25s}
+.wa-fab{width:56px;height:56px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 12px 28px -10px rgba(18,140,70,.7);transition:transform .2s}
+.wa-fab:hover{transform:scale(1.06)}
+.wa-fab svg{width:30px;height:30px}
+.wa-nav{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#25d366;color:#fff;flex:none}
+.wa-nav svg{width:22px;height:22px}
+.wa-direct{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-weight:600;color:#128c46;text-decoration:none;font-size:15px}
+.wa-direct svg{width:20px;height:20px}
+.wa-direct:hover{text-decoration:underline}
+.contacts .btns{display:flex;gap:6px}
+.copy.wa{background:#25d366;color:#fff;text-decoration:none}
 .fab.off{transform:translateY(90px);opacity:0;pointer-events:none}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;z-index:50;white-space:nowrap}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ticker div{animation:none}.rise,.rise.pre{transition:none;transform:none}.btn:hover,.ph:hover{transform:none}}
@@ -236,6 +247,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
       <li><a href="#zones">Zones</a></li>
       <li><a href="#politique">Politique</a></li>
     </ul>
+    <a class="wa-nav" href="https://wa.me/2250789150934" target="_blank" rel="noopener" aria-label="Discuter sur WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.9-2.8-1.2-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
     <a class="btn btn-violet" href="#reserver">Réserver</a>
   </div>
 </header>
@@ -248,9 +260,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
         <h1>Vos tresses, <em>chez vous.</em></h1>
         <p>Knotless, boho, French curl, invisible locks… Je viens chez vous avec tout le matériel. Vous restez à la maison, je m'occupe du reste.</p>
         <div class="ctas">
-          <a class="btn btn-violet" href="#reserver"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.9-2.8-1.2-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>Réserver un créneau</a>
+          <a class="btn btn-violet" href="#reserver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Réserver un créneau</a>
           <a class="btn btn-line" href="#tarifs">Estimer mon prix</a>
         </div>
+        <a class="wa-direct" href="https://wa.me/2250789150934" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.9-2.8-1.2-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>Ou écrivez-moi directement sur WhatsApp</a>
         <div class="hero-logo"><img src="logo-lma.png" alt="Logo Braids Style by LMA"><span>Tresses · Locks · Coiffures protectrices</span></div>
       </div>
       <div class="braid-box" id="braidBox" aria-hidden="true"><canvas id="braid"></canvas><span class="braid-hint">Passe la main sur la tresse</span></div>
@@ -358,7 +371,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
         <h2>Prête pour <em>votre prochaine coiffure ?</em></h2>
         <p>Remplissez la demande : le message WhatsApp se prépare tout seul, avec le prix estimé et l'acompte de 50 % à verser pour confirmer.</p>
         <div class="contacts">
-          <div class="row"><div><div class="label">WhatsApp</div><span class="val" id="wa">+225 07 89 15 09 34</span></div><button class="copy" type="button" data-copy="wa">Copier</button></div>
+          <div class="row"><div><div class="label">WhatsApp</div><span class="val" id="wa">+225 07 89 15 09 34</span></div><div class="btns"><a class="copy wa" href="https://wa.me/2250789150934" target="_blank" rel="noopener">Ouvrir WhatsApp</a><button class="copy" type="button" data-copy="wa">Copier</button></div></div>
           <div class="row"><div><div class="label">TikTok</div><span class="val" id="tt">@braids.style.by.lma</span></div><button class="copy" type="button" data-copy="tt">Copier</button></div>
         </div>
       </div>
@@ -389,7 +402,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
 
 <footer><div class="wrap"><span>© Braids Style by LMA · Coiffure à domicile, Abidjan</span><span>Tresses · Locks · Coiffures protectrices</span></div></footer>
 
-<a class="btn btn-violet fab off" id="fab" href="#reserver">Réserver</a>
+<div class="fabs"><a class="btn btn-violet fab off" id="fab" href="#reserver">Réserver</a><a class="wa-fab" href="https://wa.me/2250789150934" target="_blank" rel="noopener" aria-label="Discuter sur WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.9-2.8-1.2-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a></div>
 
 <div class="lb" id="lb" hidden>
   <div class="lb-card" role="dialog" aria-modal="true" aria-labelledby="lbTitle">
