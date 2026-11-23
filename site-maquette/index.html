@@ -155,6 +155,37 @@ section{padding-block:88px;scroll-margin-top:70px}
 .zones .chip.base{border-color:var(--violet);color:var(--violet-deep);font-weight:600}
 @media (max-width:860px){.zones{grid-template-columns:1fr;gap:24px}}
 
+/* Politique */
+.pol{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;min-width:0}
+.pcard.big{grid-column:span 2;background:var(--ink);color:#fff;border-color:var(--ink)}
+.pcard.big li{color:var(--on-dark-muted)}
+.pcard.big li b{color:#fff}
+.pcard .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--lilac-50);color:var(--violet-deep);margin-bottom:14px}
+.pcard.big .ico{background:rgba(255,255,255,.1);color:var(--lilac)}
+.pcard .ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pcard h3{font-size:24px;margin-bottom:10px}
+.pcard ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.pcard li{color:var(--muted);font-size:15px;padding-left:16px;position:relative}
+.pcard li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--violet)}
+.pcard li b{color:var(--fg);font-weight:600}
+.merci{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding:22px 26px;border-radius:20px;background:linear-gradient(90deg,var(--ink),#4a4352 60%,#d9d3e0);color:#fff}
+.merci strong{font-family:var(--display);font-weight:400;font-size:clamp(24px,3.4vw,34px);letter-spacing:.04em;text-transform:uppercase}
+.merci span{font-size:14.5px;color:var(--on-dark-muted);max-width:28em}
+@media (max-width:960px){.pol{grid-template-columns:1fr 1fr}.pcard.big{grid-column:1/-1}}
+@media (max-width:620px){.pol{grid-template-columns:1fr}}
+.recap{display:grid;gap:6px;background:var(--paper-2);border-radius:14px;padding:12px 14px;margin:2px 0 14px;font-size:14.5px}
+.recap div{display:flex;justify-content:space-between;gap:10px}
+.recap span{color:var(--muted)}
+.recap b{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.recap .acompte{border-top:1px dashed var(--lilac);padding-top:8px;margin-top:2px}
+.recap .acompte b{color:var(--violet-deep);font-size:16px}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin-bottom:14px;cursor:pointer}
+.agree input{width:20px;height:20px;accent-color:var(--violet);flex:none;margin-top:2px}
+.agree a{color:var(--violet-deep)}
+.btn.locked{opacity:.45}
+.sim-acompte{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-top:6px}
+.sim-acompte b{color:var(--fg);font-variant-numeric:tabular-nums}
 /* FAQ */
 .faq{border-top:1px solid var(--fg)}
 .faq details{border-bottom:1px solid var(--line);padding:18px 0}
@@ -203,7 +234,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
       <li><a href="#tarifs">Tarifs</a></li>
       <li><a href="#realisations">Réalisations</a></li>
       <li><a href="#zones">Zones</a></li>
-      <li><a href="#faq">Questions</a></li>
+      <li><a href="#politique">Politique</a></li>
     </ul>
     <a class="btn btn-violet" href="#reserver">Réserver</a>
   </div>
@@ -239,8 +270,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
       </div>
       <div class="steps rise">
         <div class="step"><b>1</b><h3>Choisissez votre coiffure</h3><p>Estimez le prix ci-dessous ou envoyez une photo d'inspiration.</p></div>
-        <div class="step"><b>2</b><h3>Bloquez votre créneau</h3><p>On fixe la date, l'heure et votre quartier. Un acompte confirme le rendez-vous.</p></div>
-        <div class="step"><b>3</b><h3>Je viens chez vous</h3><p>J'arrive avec le matériel. Vous profitez de votre coiffure sans quitter la maison.</p></div>
+        <div class="step"><b>2</b><h3>Bloquez votre créneau</h3><p>On fixe la date, l'heure et votre quartier. Un acompte de 50 % confirme le rendez-vous.</p></div>
+        <div class="step"><b>3</b><h3>Je viens chez vous</h3><p>Cheveux propres et brushés, vous êtes prête à mon arrivée. Vous profitez de votre coiffure sans quitter la maison.</p></div>
       </div>
     </div>
   </section>
@@ -264,6 +295,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
           <div class="field"><span>Taille des tresses</span><div class="seg" id="simSize"></div></div>
           <label class="switch" for="simHair"><input type="checkbox" id="simHair"> LMA fournit les mèches</label>
           <div class="total"><span>Prix estimé</span><b id="simTotal">–</b></div>
+          <div class="sim-acompte"><span>Acompte à verser (50 %)</span><b id="simDeposit">–</b></div>
+          <div class="sim-acompte"><span>Déplacement</span><b>selon le quartier</b></div>
           <a class="btn btn-violet" href="#reserver" id="simBook">Réserver ce modèle</a>
         </aside>
       </div>
@@ -286,20 +319,34 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
       <div>
         <span class="eyebrow">Zones desservies</span>
         <h2 style="margin-top:12px">Partout <em>dans Abidjan</em></h2>
-        <p>Touchez votre quartier pour l'ajouter à votre demande. Pour un autre endroit, écrivez-moi : on trouve une solution.</p>
+        <p>Touchez votre quartier pour l'ajouter à votre demande. Les frais de déplacement dépendent de votre lieu d'habitation. Après 17 h, un supplément de 2 000 F s'applique (embouteillages).</p>
       </div>
       <ul class="chips" id="zoneList"></ul>
     </div>
   </section>
 
-  <section id="faq" style="padding-top:0">
+  <section id="politique" style="padding-top:0">
     <div class="wrap">
-      <div class="sec-head rise"><div><span class="eyebrow">Questions fréquentes</span><h2>Avant <em>de réserver</em></h2></div></div>
-      <div class="faq rise">
-        <details open><summary>Faut-il verser un acompte ?</summary><p>Oui, un acompte bloque votre créneau. Le reste se paie à la fin de la coiffure, en espèces ou par mobile money.</p></details>
-        <details><summary>Combien de temps dure une coiffure ?</summary><p>De 2 heures pour des nattes collées à 6 heures ou plus pour des knotless longues. Je vous donne une estimation au moment de la réservation.</p></details>
-        <details><summary>Dois-je acheter les mèches ?</summary><p>Comme vous préférez. Je peux les fournir (ajoutées au prix) ou utiliser celles que vous avez déjà.</p></details>
-        <details><summary>Comment préparer mes cheveux ?</summary><p>Cheveux lavés, démêlés et bien secs. Si possible, sans produit gras.</p></details>
+      <div class="sec-head rise"><div><span class="eyebrow">Politique BSB LMA</span><h2>Avant <em>de réserver</em></h2></div><p>Quelques règles simples pour que chaque rendez-vous se passe bien, pour vous comme pour moi.</p></div>
+      <div class="pol rise">
+        <article class="pcard big"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2"/></svg></div><h3>Réservation, report &amp; annulation</h3><ul>
+          <li>Les créneaux sont réservables à l'avance.</li>
+          <li>Un <b>acompte de 50 %</b> est requis pour confirmer le rendez-vous. Aucun rendez-vous n'est pris en compte sans acompte.</li>
+          <li>Réservation <b>la veille ou le jour J : +2 000 FCFA</b>.</li>
+          <li><b>Un seul report</b> est autorisé, selon les disponibilités.</li>
+          <li>Tout changement de style, couleur ou taille doit être signalé <b>dans les 24 h</b> suivant la prise de rendez-vous.</li></ul></article>
+        <article class="pcard"><div class="ico"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg></div><h3>Acompte</h3><ul>
+          <li>L'acompte de 50 % est <b>non remboursable</b> en cas d'absence ou d'annulation.</li></ul></article>
+        <article class="pcard"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.6"/><circle cx="14" cy="18" r="2.6"/><path d="M7.8 16.2 17 3M12.2 16.2 9.5 12"/><path d="M19 4v12M19 6h2M19 9h2M19 12h2"/></svg></div><h3>Entretien des cheveux</h3><ul>
+          <li>Avant mon arrivée, les cheveux doivent être <b>propres et préalablement brushés</b>.</li>
+          <li>Précisez si vos cheveux sont courts, longs ou volumineux, et toute sensibilité ou problème capillaire.</li></ul></article>
+        <article class="pcard"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5h4"/></svg></div><h3>Temps d'attente</h3><ul>
+          <li>Merci d'être disponible à mon arrivée.</li>
+          <li>Après <b>20 minutes d'attente</b> à votre domicile, je me réserve le droit de partir.</li></ul></article>
+        <article class="pcard"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 16v-4l2-5h12l2 5v4"/><path d="M3 16h18"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/><path d="M6 12h12"/></svg></div><h3>Déplacement</h3><ul>
+          <li>Les frais de déplacement sont établis selon votre lieu d'habitation.</li>
+          <li>Rendez-vous <b>après 17 h 00 : +2 000 FCFA</b>, à cause des embouteillages en heure de pointe.</li></ul></article>
+        <div class="merci"><strong>Merci pour la confiance</strong><span>Nous sommes ravies de vous compter parmi nos clientes et impatientes de vous retrouver très bientôt.</span></div>
       </div>
     </div>
   </section>
@@ -309,7 +356,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
       <div class="rise">
         <span class="eyebrow">Réservation</span>
         <h2>Prête pour <em>votre prochaine coiffure ?</em></h2>
-        <p>Remplissez la demande : le message WhatsApp se prépare tout seul. Il ne reste qu'à l'envoyer.</p>
+        <p>Remplissez la demande : le message WhatsApp se prépare tout seul, avec le prix estimé et l'acompte de 50 % à verser pour confirmer.</p>
         <div class="contacts">
           <div class="row"><div><div class="label">WhatsApp</div><span class="val" id="wa">+225 07 89 15 09 34</span></div><button class="copy" type="button" data-copy="wa">Copier</button></div>
           <div class="row"><div><div class="label">TikTok</div><span class="val" id="tt">@braids.style.by.lma</span></div><button class="copy" type="button" data-copy="tt">Copier</button></div>
@@ -324,9 +371,15 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
           <label class="field" for="bDate"><span>Date souhaitée</span><input id="bDate" type="date"></label>
         </div>
         <div class="field"><span>Moment de la journée</span><div class="seg" id="bSlot"></div></div>
+        <div class="two">
+          <label class="field" for="bHair"><span>Vos cheveux</span><select id="bHair"></select></label>
+          <label class="field" for="bSens"><span>Sensibilité capillaire</span><input id="bSens" placeholder="Facultatif"></label>
+        </div>
+        <div class="recap" id="bRecap" aria-live="polite"></div>
         <div class="field"><span>Votre message</span><div class="preview" id="bPreview" aria-live="polite"></div></div>
+        <label class="agree" for="bAgree"><input type="checkbox" id="bAgree"><span>J'ai lu et j'accepte la <a href="#politique">politique BSB LMA</a> (acompte de 50 % non remboursable, 20 min d'attente maximum).</span></label>
         <div class="actions">
-          <a class="btn btn-violet" id="bSend" href="https://wa.me/2250789150934" target="_blank" rel="noopener">Envoyer sur WhatsApp</a>
+          <a class="btn btn-violet locked" id="bSend" href="https://wa.me/2250789150934" target="_blank" rel="noopener" aria-disabled="true">Envoyer sur WhatsApp</a>
           <button class="btn btn-line" type="button" id="bCopy">Copier</button>
         </div>
       </form>
@@ -373,9 +426,11 @@ const SIZES=[['Grosses',.85],['Moyennes',1],['Fines',1.3]];
 const HAIR=5000;
 const ZONES=['Flora · Légré','Cocody','Riviera','Angré','Palmeraie','Deux-Plateaux','Plateau','Marcory','Koumassi','Treichville','Yopougon','Abobo','Bingerville'];
 const GAL=[['Boho knotless','Riviera',1],['Invisible locks','Angré'],['French curl braids','Marcory'],['Box braids','Cocody'],['Nattes collées','Yopougon'],['Fausses locks','Bingerville',1]];
-const SLOTS=['Matin','Après-midi','Fin de journée'];
+const SLOTS=['Matin','Après-midi','Après 17 h'];
+const HAIRS=['Courts','Mi-longs','Longs','Volumineux'];
+const LATE=2000,LAST_MINUTE=2000;
 
-const st={filter:'Toutes',style:0,len:0,size:1,hair:false,gal:'Toutes',slot:0,zone:0,lb:0};
+const st={filter:'Toutes',style:0,len:0,size:1,hair:false,gal:'Toutes',slot:0,zone:0,lb:0,hairType:2};
 
 /* Carte des coiffures + filtre */
 const cats=['Toutes',...new Set(STYLES.map(s=>s.cat))];
@@ -392,7 +447,7 @@ function renderSim(){
   $('#simStyle').innerHTML=opts(STYLES.map(s=>s.n),st.style);
   $('#simLen').innerHTML=segs(LENS,'len',st.len);$('#simSize').innerHTML=segs(SIZES,'size',st.size);
   $('#simHair').checked=st.hair;
-  const p=price();$('#simTotal').textContent=money(p*.9)+' – '+money(p*1.1);
+  const p=price();$('#simTotal').textContent=money(p*.9)+' – '+money(p*1.1);$('#simDeposit').textContent=money(p*.45)+' – '+money(p*.55);
 }
 /* Galerie + visionneuse */
 const gcats=['Toutes',...new Set(GAL.map(g=>STYLES.find(s=>s.n===g[0]).cat))];
@@ -410,14 +465,38 @@ function renderForm(){
   $('#bStyle').innerHTML=opts(STYLES.map(s=>s.n),st.style);
   $('#bZone').innerHTML=opts(ZONES,st.zone);
   $('#bSlot').innerHTML=segs(SLOTS,'slot',st.slot);
+  $('#bHair').innerHTML=opts(HAIRS,st.hairType);
   updateMsg();
 }
-function message(){
-  const name=$('#bName').value.trim(),d=$('#bDate').value;
-  const date=d?new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'(date à convenir)';
-  return `Bonjour LMA${name?', c\'est '+name:''} !\nJe voudrais des ${STYLES[st.style].n} (${LENS[st.len][0].toLowerCase()}${st.hair?', mèches fournies par vous':''}).\nQuartier : ${ZONES[st.zone]}\nDate : ${date}, ${SLOTS[st.slot].toLowerCase()}.\nPrix estimé sur le site : ${$('#simTotal').textContent}. Merci !`;
+function extras(){
+  const out=[];const d=$('#bDate').value;
+  if(d){const today=new Date();today.setHours(0,0,0,0);const day=new Date(d+'T00:00');const diff=Math.round((day-today)/864e5);
+    if(diff>=0&&diff<=1)out.push(['Réservation la veille ou le jour J',LAST_MINUTE])}
+  if(st.slot===2)out.push(['Rendez-vous après 17 h',LATE]);
+  return out;
 }
-function updateMsg(){const m=message();$('#bPreview').textContent=m;$('#bSend').href='https://wa.me/2250789150934?text='+encodeURIComponent(m)}
+function quote(){const p=price(),x=extras().reduce((a,e)=>a+e[1],0);return{lo:p*.9+x,hi:p*1.1+x,x}}
+function message(){
+  const name=$('#bName').value.trim(),d=$('#bDate').value,sens=$('#bSens').value.trim(),q=quote();
+  const date=d?new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'(date à convenir)';
+  const lines=[`Bonjour LMA${name?', c\'est '+name:''} !`,
+    `Je voudrais des ${STYLES[st.style].n} (longueur : ${LENS[st.len][0].toLowerCase()}${st.hair?', mèches fournies par vous':''}).`,
+    `Mes cheveux : ${HAIRS[st.hairType].toLowerCase()}${sens?' · sensibilité : '+sens:''}.`,
+    `Quartier : ${ZONES[st.zone]}`,
+    `Date : ${date}, ${SLOTS[st.slot].toLowerCase()}.`,
+    `Estimation du site : ${money(q.lo)} – ${money(q.hi)} (hors déplacement)${q.x?', suppléments inclus':''}.`,
+    `Je suis prête à verser l'acompte de 50 % pour confirmer.`];
+  if($('#bAgree').checked)lines.push("J'ai lu et j'accepte la politique BSB LMA.");
+  lines.push('Merci !');return lines.join('\n');
+}
+function updateMsg(){
+  const q=quote(),ex=extras();
+  $('#bRecap').innerHTML=`<div><span>${esc(STYLES[st.style].n)}</span><b>${money(q.lo-q.x)} – ${money(q.hi-q.x)}</b></div>`+
+    ex.map(e=>`<div><span>${e[0]}</span><b>+ ${money(e[1])}</b></div>`).join('')+
+    `<div><span>Déplacement</span><b>selon le quartier</b></div><div class="acompte"><span>Acompte à verser (50 %)</span><b>${money(q.lo/2)} – ${money(q.hi/2)}</b></div>`;
+  const m=message();$('#bPreview').textContent=m;$('#bSend').href='https://wa.me/2250789150934?text='+encodeURIComponent(m);
+  const ok=$('#bAgree').checked;$('#bSend').classList.toggle('locked',!ok);$('#bSend').setAttribute('aria-disabled',String(!ok));
+}
 function syncAll(){renderMenu();renderSim();renderForm()}
 
 /* Événements */
@@ -442,7 +521,10 @@ $('#simStyle').addEventListener('change',e=>{st.style=+e.target.value;syncAll()}
 $('#simHair').addEventListener('change',e=>{st.hair=e.target.checked;renderSim();updateMsg()});
 $('#bStyle').addEventListener('change',e=>{st.style=+e.target.value;renderMenu();renderSim();updateMsg()});
 $('#bZone').addEventListener('change',e=>{st.zone=+e.target.value;renderZones();updateMsg()});
-['#bName','#bDate'].forEach(s=>$(s).addEventListener('input',updateMsg));
+['#bName','#bDate','#bSens'].forEach(s=>$(s).addEventListener('input',updateMsg));
+$('#bAgree').addEventListener('change',updateMsg);
+$('#bHair').addEventListener('change',e=>{st.hairType=+e.target.value;updateMsg()});
+$('#bSend').addEventListener('click',e=>{if(!$('#bAgree').checked){e.preventDefault();toast('Cochez la politique BSB LMA pour continuer');$('#bAgree').focus()}});
 $('#bookForm').addEventListener('submit',e=>e.preventDefault());
 function copy(txt){try{navigator.clipboard.writeText(txt).then(()=>toast('Copié'),()=>toast('Sélectionnez le texte pour le copier'))}catch(err){toast('Sélectionnez le texte pour le copier')}}
 try{const d=new Date();d.setDate(d.getDate()+1);$('#bDate').min=new Date().toISOString().slice(0,10)}catch(e){}
