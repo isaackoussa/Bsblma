@@ -388,6 +388,17 @@ footer a:hover{text-decoration:underline}
 .msg summary::after{content:" +";color:var(--violet)}
 .msg[open] summary::after{content:" –"}
 .msg .preview{margin-top:8px}
+
+/* Place réservée au badge « Powered by Netlify » (bas à droite) : rien d'important dessous */
+:root{--nlb:58px}
+.fabs{left:max(16px,env(safe-area-inset-left,0px));right:auto;bottom:calc(16px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+footer .wrap{padding-bottom:calc(24px + var(--nlb))}
+@media (max-width:860px){
+  .tabbar{padding-bottom:calc(6px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+  .fabs{bottom:calc(84px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+  footer{padding-bottom:calc(70px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(150px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+}
 </style>
 </head>
 <body>

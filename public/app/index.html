@@ -196,6 +196,14 @@ h2:first-child{margin-top:4px}
 .sheet-actions .btn{flex:1 1 auto}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;z-index:30;white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}}
+
+/* Place réservée au badge « Powered by Netlify » (bas à droite) */
+:root{--nlb:58px}
+.tabs{padding-bottom:calc(8px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+.app{padding-bottom:calc(110px + var(--nlb))}
+.toast{bottom:calc(90px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+.sheet{padding-bottom:calc(18px + var(--nlb) + env(safe-area-inset-bottom,0px))}
+@media (max-width:430px){.top{gap:10px;padding:12px}.avatar{width:52px;height:52px}.brand h1{font-size:18px}.brand p{display:none}.top .icon-btn{width:34px;height:34px}}
 </style>
 </head>
 <body>
