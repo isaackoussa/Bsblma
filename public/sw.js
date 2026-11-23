@@ -1,5 +1,5 @@
 // Service worker : app utilisable hors connexion + affichage des notifications.
-const CACHE = 'lma-v2';
+const CACHE = 'lma-v3';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/assets/logo-lma.png', '/assets/icon-192.png', '/assets/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -15,7 +15,7 @@ self.addEventListener('activate', e => {
 // Réseau d'abord (pour recevoir les mises à jour), cache si pas de connexion.
 self.addEventListener('fetch', e => {
   const req = e.request;
-  if (req.method !== 'GET') return;
+  if (req.method !== 'GET' || new URL(req.url).pathname.startsWith('/api/')) return;
   e.respondWith(
     fetch(req).then(res => {
       if (res.ok && new URL(req.url).origin === location.origin) {

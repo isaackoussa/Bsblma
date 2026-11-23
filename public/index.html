@@ -72,8 +72,17 @@ h2:first-child{margin-top:4px}
 .kpi.hero b{font-size:30px;color:var(--ink-fg)}
 .kpi.hero small{display:block;color:var(--ink-muted);font-size:12.5px;margin-top:2px}
 /* Rappels */
+.cloud{margin-left:auto;position:relative;flex:none}
+.cloud+.bell{margin-left:0}
+.cloud .dot{position:absolute;right:6px;bottom:7px;width:9px;height:9px;border-radius:50%;background:var(--ink-muted);border:2px solid var(--ink-2)}
+.cloud .dot[data-s="ok"]{background:var(--good)}
+.cloud .dot[data-s="pending"],.cloud .dot[data-s="syncing"]{background:var(--warn)}
+.cloud .dot[data-s="error"]{background:var(--bad)}
+.sync-info{grid-column:1/-1;font-size:14px;color:var(--muted);margin:0 0 4px;line-height:1.5}
+.sync-info b{color:var(--fg)}
+.ph-loading{display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px}
 .bell{margin-left:auto;position:relative;flex:none}
-.bell svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.top .icon-btn svg,.bell svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .bell .badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px;font-variant-numeric:tabular-nums}
 .remind{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .remind-row{display:grid;grid-template-columns:84px 1fr;gap:10px;font-size:14px;align-items:start}
@@ -196,6 +205,7 @@ h2:first-child{margin-top:4px}
       <h1>Braids Style <em>by LMA</em></h1>
       <p>Tresses, locks &amp; coiffures protectrices · à domicile, Abidjan</p>
     </div>
+    <button type="button" class="icon-btn cloud" id="cloudBtn" aria-label="Sauvegarde en ligne"><svg viewBox="0 0 24 24"><path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 9.6 4.2 4.2 0 0 0 7 18z"/></svg><span class="dot" id="cloudDot" data-s="off"></span></button>
     <button type="button" class="icon-btn bell" id="bellBtn" aria-label="Rappels"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span class="badge" id="bellBadge" hidden></span></button>
   </header>
   <div class="note" id="demoNote"><span>Prototype rempli avec des données d'exemple.</span><button type="button" id="resetBtn">Tout vider</button></div>
@@ -291,7 +301,91 @@ function sample(){return{demo:true,
 let db; try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!db||!db.rdv) db=sample();
 if(!db.photos) db.photos=[];
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db));return true}catch(e){return false}};
+const saveLocal=()=>{try{localStorage.setItem(KEY,JSON.stringify(db));return true}catch(e){return false}};
+const save=()=>{db.updatedAt=Date.now();const ok=saveLocal();schedulePush();return ok};
+
+/* Sauvegarde en ligne */
+let code=null;try{code=localStorage.getItem(KEY+'-code')}catch(e){}
+let lastSync=null;try{lastSync=+localStorage.getItem(KEY+'-lastsync')||null}catch(e){}
+const sync={state:'off',timer:null,busy:false,dirty:false};
+const enc=c=>encodeURIComponent(String(c).trim());
+async function api(path,opt={}){
+  const k=opt.code||code;const headers={...(opt.headers||{})};if(k)headers['x-lma-code']=k;
+  const r=await fetch('/api'+path,{method:opt.method||'GET',body:opt.body,headers,cache:'no-store'});
+  let b=null;try{b=await r.json()}catch(e){}
+  if(!r.ok){const err=new Error((b&&b.error)||('http_'+r.status));err.status=r.status;throw err}
+  return b;
+}
+function setSync(st){sync.state=st;const d=document.getElementById('cloudDot');if(d)d.dataset.s=st}
+function schedulePush(){if(!code)return;sync.dirty=true;setSync('pending');clearTimeout(sync.timer);sync.timer=setTimeout(push,1500)}
+async function push(){
+  if(!code||sync.busy)return;sync.busy=true;sync.dirty=false;setSync('syncing');
+  try{
+    for(const id of [...(db.deletedPhotos||[])]){await api('/photo/'+id,{method:'DELETE'});db.deletedPhotos=db.deletedPhotos.filter(x=>x!==id)}
+    for(const p of db.photos){if(!p.synced&&p.src){await api('/photo/'+p.id,{method:'PUT',body:p.src,headers:{'content-type':'text/plain'}});p.synced=true}}
+    const copy={...db,deletedPhotos:[],photos:db.photos.map(({src,synced,...rest})=>rest)};
+    await api('/data',{method:'PUT',body:JSON.stringify(copy),headers:{'content-type':'application/json'}});
+    lastSync=Date.now();try{localStorage.setItem(KEY+'-lastsync',String(lastSync))}catch(e){}
+    saveLocal();setSync(sync.dirty?'pending':'ok');
+  }catch(e){sync.dirty=true;setSync(e.status===401?'error':'pending');if(e.status===401)toast('Code de sauvegarde refusé')}
+  finally{sync.busy=false;if(sync.dirty&&sync.state!=='error'&&navigator.onLine!==false){clearTimeout(sync.timer);sync.timer=setTimeout(push,4000)}}
+}
+async function pull(){
+  if(!code||sync.busy)return;setSync('syncing');
+  try{
+    const {data}=await api('/data');
+    if(data&&(data.updatedAt||0)>(db.updatedAt||0)){
+      const local=new Map(db.photos.map(p=>[p.id,p.src]));
+      data.photos=(data.photos||[]).map(p=>({...p,src:local.get(p.id)||null,synced:true}));
+      data.deletedPhotos=[];db=data;saveLocal();render();setSync('ok');
+      lastSync=Date.now();try{localStorage.setItem(KEY+'-lastsync',String(lastSync))}catch(e){}
+      loadMissingPhotos();
+    }else if(!data||(db.updatedAt||0)>(data.updatedAt||0)){sync.dirty=true;await push()}
+    else setSync('ok');
+  }catch(e){setSync(e.status===401?'error':'pending')}
+}
+let loadingPhotos=false;
+async function loadMissingPhotos(){
+  if(loadingPhotos||!code)return;loadingPhotos=true;
+  try{for(const p of db.photos.filter(x=>!x.src)){try{const r=await api('/photo/'+p.id);p.src=r.src;saveLocal();if(state.tab==='galerie')renderGalerie()}catch(e){if(e.status!==404)break}}}
+  finally{loadingPhotos=false}
+}
+async function openCloud(){
+  if(code){
+    const when=lastSync?new Date(lastSync).toLocaleString('fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'jamais';
+    const label={ok:'Tout est sauvegardé',pending:'Modifications en attente d’envoi',syncing:'Sauvegarde en cours…',error:'Code refusé : déconnecte puis reconnecte ce téléphone'}[sync.state]||'';
+    openSheet({title:'Sauvegarde en ligne',submit:'Sauvegarder maintenant',fields:[],
+      html:`<p class="sync-info"><b>${label}</b><br>Dernière sauvegarde : ${when}.<br>Rendez-vous, caisse, stock et photos sont copiés en ligne automatiquement. Sur un autre téléphone, ouvre l’app et connecte-toi avec ton code.</p>`,
+      onSubmit:()=>{sync.dirty=true;push();toast('Sauvegarde lancée');return 'nosave'},
+      extra:[{label:'Déconnecter ce téléphone',cls:'danger',confirm:true,nosave:true,run:()=>{code=null;try{localStorage.removeItem(KEY+'-code')}catch(e){}setSync('off');toast('Téléphone déconnecté')}}]});
+    return;
+  }
+  let st;try{st=await api('/status')}catch(e){toast('Pas de connexion internet');return}
+  if(!st.setup){
+    openSheet({title:'Activer la sauvegarde',submit:'Activer',
+      html:'<p class="sync-info">Choisis un code secret (6 caractères minimum). Il protège tes données et te permet de les retrouver sur un autre téléphone. <b>Note-le bien : il ne peut pas être récupéré.</b></p>',
+      fields:[{k:'c1',label:'Code secret',type:'password'},{k:'c2',label:'Confirme le code',type:'password'}],
+      onSubmit:o=>{if(o.c1.length<6){toast('6 caractères minimum');return false}if(o.c1!==o.c2){toast('Les deux codes sont différents');return false}setupCode(o.c1);return 'nosave'}});
+  }else{
+    openSheet({title:'Connecter ce téléphone',submit:'Connecter',
+      html:'<p class="sync-info">La sauvegarde est déjà activée. Entre ton code secret pour retrouver tes données ici. <b>Elles remplaceront celles de ce téléphone.</b></p>',
+      fields:[{k:'c1',label:'Code secret',type:'password'}],
+      onSubmit:o=>{if(!o.c1){toast('Entre ton code');return false}connectCode(o.c1);return 'nosave'}});
+  }
+}
+async function setupCode(c){
+  const v=enc(c);
+  try{await api('/setup',{method:'POST',code:'',body:JSON.stringify({code:v}),headers:{'content-type':'application/json'}});
+    code=v;try{localStorage.setItem(KEY+'-code',v)}catch(e){}
+    db.updatedAt=Date.now();saveLocal();sync.dirty=true;await push();toast('Sauvegarde activée')}
+  catch(e){toast(e.message==='already_setup'?'Déjà activée : connecte-toi avec ton code':'Activation impossible, réessaie')}
+}
+async function connectCode(c){
+  const v=enc(c);
+  try{await api('/login',{code:v})}catch(e){toast(e.status===401?'Code incorrect':'Connexion impossible, réessaie');return}
+  code=v;try{localStorage.setItem(KEY+'-code',v)}catch(e){}
+  db.updatedAt=0;await pull();toast('Téléphone connecté');
+}
 
 /* Photo de profil */
 let avatar=null; try{avatar=localStorage.getItem(KEY+'-avatar')}catch(e){}
@@ -454,7 +548,7 @@ function renderGalerie(){
     <h2>Mes réalisations</h2>
     <p class="hint">Facultatif : garde les photos de tes coiffures pour les montrer aux clientes.</p>
     ${ph.length?`<div class="chips">${chip('tout','Tout')}${cats.map(c=>chip(c,c)).join('')}</div>
-    <div class="gal">${list.map(p=>`<button type="button" class="ph" data-ph="${p.id}"><img src="${p.src}" alt="${esc(p.prestation)}" loading="lazy"><span>${esc(p.prestation)}<small>${dShort(p.date)}${p.cliente?' · '+esc(p.cliente):''}</small></span></button>`).join('')}</div>`
+    <div class="gal">${list.map(p=>`<button type="button" class="ph" data-ph="${p.id}">${p.src?`<img src="${p.src}" alt="${esc(p.prestation)}" loading="lazy">`:'<span class="ph-loading">Chargement…</span>'}<span>${esc(p.prestation)}<small>${dShort(p.date)}${p.cliente?' · '+esc(p.cliente):''}</small></span></button>`).join('')}</div>`
     :'<p class="empty">Aucune photo pour l\'instant. Tu peux en ajouter ici ou depuis un rendez-vous.</p>'}
     <button class="add" type="button" id="addPhoto">+ Ajouter des photos</button>`;
 }
@@ -475,9 +569,9 @@ $('#photoInput').addEventListener('change',async e=>{
       toast(srcs.length>1?'Photos ajoutées':'Photo ajoutée')}});
 });
 function photoView(p){
-  openSheet({title:p.prestation,submit:'Fermer',onSubmit:()=>{},fields:[],
-    html:`<img class="photo-big" src="${p.src}" alt="${esc(p.prestation)}"><p class="hint" style="margin:4px 0 0">${p.cliente?esc(p.cliente)+' · ':''}${dLong(p.date)}</p>`,
-    extra:[{label:'Supprimer',cls:'danger',confirm:true,run:()=>{db.photos=db.photos.filter(x=>x.id!==p.id);toast('Photo supprimée')}}]});
+  openSheet({title:p.prestation,submit:'Fermer',onSubmit:()=>'nosave',fields:[],
+    html:`${p.src?`<img class="photo-big" src="${p.src}" alt="${esc(p.prestation)}">`:'<p class="empty" style="grid-column:1/-1">Photo en cours de chargement…</p>'}<p class="hint" style="margin:4px 0 0">${p.cliente?esc(p.cliente)+' · ':''}${dLong(p.date)}</p>`,
+    extra:[{label:'Supprimer',cls:'danger',confirm:true,run:()=>{if(p.synced)(db.deletedPhotos=db.deletedPhotos||[]).push(p.id);db.photos=db.photos.filter(x=>x.id!==p.id);toast('Photo supprimée')}}]});
 }
 
 function render(){
@@ -505,12 +599,12 @@ function openSheet({title,fields,submit='Enregistrer',onSubmit,extra=[],html=''}
 let sheetFieldsDef=[];
 const closeSheet=()=>{$('#sheet').hidden=true};
 function readForm(){const o={};sheetFieldsDef.forEach(f=>{const v=$('#f_'+f.k).value.trim();o[f.k]=f.type==='number'?Math.max(0,Number(v)||0):v});return o}
-$('#sheetForm').addEventListener('submit',e=>{e.preventDefault();const o=readForm();if(sheetCb&&sheetCb(o)!==false){db.demo=db.demo&&true;save();closeSheet();render()}});
+$('#sheetForm').addEventListener('submit',e=>{e.preventDefault();const o=readForm();const r=sheetCb?sheetCb(o):undefined;if(r===false)return;if(r!=='nosave')save();closeSheet();render()});
 $('#sheetCancel').addEventListener('click',closeSheet);
 $('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet()});
 $('#sheetExtra').addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(!b)return;const x=sheetExtra[+b.dataset.x];
   if(x.confirm&&!b.dataset.armed){b.dataset.armed='1';b.textContent='Confirmer la suppression';return}
-  x.run(readForm());save();closeSheet();render();});
+  x.run(readForm());if(!x.nosave)save();closeSheet();render();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet()});
 
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1800)}
@@ -583,6 +677,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#addPhoto'))return pickPhotos();
   if(b=g('data-new'))return txForm(null,{type:b.dataset.new,cat:b.dataset.new==='entree'?'Prestation':'Achat mèches'});
   if(b=g('data-inc')||g('data-dec')){const id=b.dataset.inc||b.dataset.dec;const s=db.stock.find(x=>x.id===id);s.qte=Math.max(0,s.qte+(b.dataset.inc?1:-1));save();render();return}
+  if(e.target.closest('#cloudBtn'))return openCloud();
   if(e.target.closest('#bellBtn')){state.tab='accueil';render();const h=$('#rappels');if(h)h.scrollIntoView({block:'start'});return}
   if(e.target.closest('#notifBtn'))return enableNotif();
   if(e.target.closest('#addRdv'))return rdvForm();
@@ -590,12 +685,14 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#prevM')){state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1);renderAgenda();return}
   if(e.target.closest('#nextM')){state.month=new Date(state.month.getFullYear(),state.month.getMonth()+1,1);renderAgenda();return}
   if(e.target.closest('#resetBtn')){const r=$('#resetBtn');if(!r.dataset.armed){r.dataset.armed='1';r.textContent='Confirmer ?';return}
-    db={demo:false,rdv:[],tx:[],stock:[],photos:[]};save();r.dataset.armed='';r.textContent='Tout vider';render();toast('Prêt pour tes vraies données')}
+    db={demo:false,rdv:[],tx:[],stock:[],photos:[],deletedPhotos:db.photos.filter(p=>p.synced).map(p=>p.id)};save();r.dataset.armed='';r.textContent='Tout vider';render();toast('Prêt pour tes vraies données')}
 });
 render();
 sendDigest(false);
+setSync(code?'pending':'off');if(code){pull().then(loadMissingPhotos)}
+window.addEventListener('online',()=>{if(code)pull()});
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
-document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(iso(new Date())!==T){location.reload();return}sendDigest(false);render()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(iso(new Date())!==T){location.reload();return}sendDigest(false);render();if(code)pull()});
 })();
 </script>
 </body>
