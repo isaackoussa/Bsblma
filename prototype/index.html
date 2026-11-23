@@ -1,4 +1,4 @@
-<title>Braid Style by LMA</title>
+<title>Braids Style by LMA</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,9 +6,9 @@
 <style>
 /* Layout: app mobile, une colonne, barre d'onglets fixe en bas. Look unique violet/noir (choix de la cliente). */
 :root{
-  --bg:#0b0810; --surface:#15101d; --surface-2:#1e1629; --line:#2d2340;
-  --fg:#f3edf9; --muted:#a495b8; --accent:#b36bff; --accent-deep:#6d28d9; --on-accent:#120a1c;
-  --good:#3ddc97; --warn:#f5b83d; --bad:#ff6b81;
+  --bg:#0c0a0f; --surface:#141118; --surface-2:#1c1822; --line:#29232f;
+  --fg:#efeaf3; --muted:#9a90a6; --accent:#a98bd0; --accent-deep:#3a2a52; --on-accent:#140f1a;
+  --good:#6cc6a0; --warn:#d6a85a; --bad:#de8190;
   --display:"Syne", "Avenir Next", system-ui, sans-serif;
   --body:"DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme:dark;
@@ -23,8 +23,8 @@ button{cursor:pointer}
 
 /* En-tête */
 .top{display:flex;align-items:center;gap:14px;padding-block:6px 14px}
-.avatar{position:relative;width:62px;height:62px;flex:none;border-radius:50%;padding:3px;background:conic-gradient(from 200deg,var(--accent),var(--accent-deep),#2a0f4d,var(--accent));cursor:pointer}
-.avatar-in{width:100%;height:100%;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;overflow:hidden;border:2px solid var(--bg)}
+.avatar{position:relative;width:62px;height:62px;flex:none;border-radius:50%;padding:3px;background:linear-gradient(145deg,var(--accent),var(--accent-deep));cursor:pointer}
+.avatar-in{width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;border:2px solid var(--bg)}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .avatar-mono{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.04em;color:var(--accent)}
 .avatar-edit{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:14px;font-weight:700;border:2px solid var(--bg)}
@@ -46,10 +46,20 @@ h2:first-child{margin-top:4px}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
 .kpi span{display:block;font-size:12px;color:var(--muted);letter-spacing:.02em}
 .kpi b{display:block;font-family:var(--display);font-size:21px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kpi.hero{grid-column:1/-1;background:linear-gradient(135deg,var(--accent-deep),#3b0f6e 70%,var(--surface-2));border-color:transparent}
-.kpi.hero span{color:#e5d4ff}
-.kpi.hero b{font-size:30px;color:#fff}
-.kpi.hero small{display:block;color:#d9c3ff;font-size:12.5px;margin-top:2px}
+.kpi.hero{grid-column:1/-1;background:linear-gradient(135deg,var(--accent-deep),var(--surface-2) 75%);border-color:var(--line)}
+.kpi.hero b{font-size:30px}
+.kpi.hero small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+/* Rappels */
+.bell{margin-left:auto;position:relative;flex:none}
+.bell svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bell .badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px;font-variant-numeric:tabular-nums}
+.remind{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.remind-row{display:grid;grid-template-columns:84px 1fr;gap:10px;font-size:14px;align-items:start}
+.remind-row>b{color:var(--accent);font-weight:600}
+.remind-row div{min-width:0;font-variant-numeric:tabular-nums}
+.remind-row span{color:var(--muted)}
+.remind-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px;font-size:12.5px;color:var(--muted)}
+.remind-foot .btn{padding:8px 12px;font-size:13.5px}
 .c-good{color:var(--good)} .c-bad{color:var(--bad)} .c-warn{color:var(--warn)}
 
 /* Pills */
@@ -145,14 +155,15 @@ h2:first-child{margin-top:4px}
 <div class="app">
   <header class="top">
     <label class="avatar" for="avatarInput" title="Changer la photo de profil">
-      <span class="avatar-in"><img id="avatarImg" alt="Photo de profil" hidden><span class="avatar-mono" id="avatarMono">LMA</span></span>
+      <span class="avatar-in"><img id="avatarImg" src="assets/logo-lma.png" alt="Logo Braids Style by LMA"></span>
       <span class="avatar-edit" aria-hidden="true">+</span>
     </label>
     <input type="file" id="avatarInput" accept="image/*" hidden>
     <div class="brand">
-      <h1>Braid Style <em>by LMA</em></h1>
+      <h1>Braids Style <em>by LMA</em></h1>
       <p>Tresses, locks &amp; coiffures protectrices · à domicile, Abidjan</p>
     </div>
+    <button type="button" class="icon-btn bell" id="bellBtn" aria-label="Rappels"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span class="badge" id="bellBadge" hidden></span></button>
   </header>
   <div class="note" id="demoNote"><span>Prototype rempli avec des données d'exemple.</span><button type="button" id="resetBtn">Tout vider</button></div>
 
@@ -247,7 +258,7 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}};
 
 /* Photo de profil */
 let avatar=null; try{avatar=localStorage.getItem(KEY+'-avatar')}catch(e){}
-function showAvatar(){const img=$('#avatarImg');if(avatar){img.src=avatar;img.hidden=false;$('#avatarMono').hidden=true}}
+function showAvatar(){if(avatar)$('#avatarImg').src=avatar}
 showAvatar();
 $('#avatarInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{avatar=r.result;try{localStorage.setItem(KEY+'-avatar',avatar)}catch(err){}showAvatar();toast('Photo mise à jour')};r.readAsDataURL(f)});
 
@@ -290,6 +301,9 @@ function renderAccueil(){
   const next=db.rdv.filter(r=>r.date>T&&r.statut!=='fait').sort(byDateTime).slice(0,4);
   const low=lowStock(); const moisNom=now.toLocaleDateString('fr-FR',{month:'long'});
   $('#v-accueil').innerHTML=`
+    <h2 id="rappels">Rappels</h2>
+    ${remindHTML()}
+    <h2>Ce mois-ci</h2>
     <div class="kpis">
       <div class="kpi hero"><span>Solde de ${moisNom}</span><b class="num">${fmt(s.solde)}</b><small>${fmt(s.encaisse)} encaissés · ${fmt(s.depenses)} dépensés</small></div>
       <div class="kpi"><span>Reste à encaisser</span><b class="c-warn">${fmt(s.reste)}</b></div>
@@ -302,6 +316,42 @@ function renderAccueil(){
     <h2>Stock à racheter</h2>
     <div class="list">${low.length?low.map(stRow).join(''):'<p class="empty">Le stock est bon.</p>'}</div>`;
 }
+
+/* Rappels & notifications */
+function upcoming(){const tm=shift(1);const pend=d=>db.rdv.filter(r=>r.date===d&&r.statut!=='fait').sort(byDateTime);return{today:pend(T),tomorrow:pend(tm)}}
+const hasNotif=()=>'Notification' in window;
+const notifState=()=>hasNotif()?Notification.permission:'absent';
+function remindHTML(){
+  const u=upcoming();
+  const line=r=>`${esc(r.heure)} · ${esc(r.cliente)} <span>· ${esc(r.prestation)}, ${esc(r.quartier)}</span>`;
+  const block=(label,arr)=>`<div class="remind-row"><b>${label}</b><div>${arr.length?arr.map(line).join('<br>'):'<span>Aucun rendez-vous</span>'}</div></div>`;
+  const st=notifState();
+  const foot=st==='granted'?'<span class="pill good">Notifications activées</span><span>Résumé chaque matin + alerte 1 h avant</span>'
+    :st==='denied'?'<span>Notifications bloquées : autorise-les dans les réglages du navigateur.</span>'
+    :st==='absent'?'<span>Les notifications du téléphone seront actives dans la version en ligne.</span>'
+    :'<span>Reçois un résumé le matin et une alerte 1 h avant chaque RDV.</span><button type="button" class="btn primary" id="notifBtn">Activer</button>';
+  return `<div class="remind">${block("Aujourd'hui",u.today)}${block('Demain',u.tomorrow)}<div class="remind-foot">${foot}</div></div>`;
+}
+function notify(title,body,tag){try{new Notification(title,{body,icon:'assets/logo-lma.png',tag})}catch(e){}}
+function sendDigest(force){
+  if(notifState()!=='granted')return;let last=null;try{last=localStorage.getItem(KEY+'-digest')}catch(e){}
+  if(!force&&last===T)return;const u=upcoming();
+  notify('Braids Style by LMA',`Aujourd'hui : ${u.today.length} RDV${u.today[0]?' (1er à '+u.today[0].heure+')':''} · Demain : ${u.tomorrow.length} RDV`,'digest');
+  try{localStorage.setItem(KEY+'-digest',T)}catch(e){}
+}
+let timers=[];
+function scheduleToday(){
+  timers.forEach(clearTimeout);timers=[];if(notifState()!=='granted')return;
+  upcoming().today.forEach(r=>{const[h,m]=r.heure.split(':').map(Number);const wait=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m).getTime()-36e5-Date.now();
+    if(wait>0)timers.push(setTimeout(()=>notify('RDV dans 1 heure',`${r.heure} · ${r.cliente} : ${r.prestation} (${r.quartier})`,'rdv-'+r.id),wait))});
+}
+async function enableNotif(){
+  if(!hasNotif()){toast('Notifications indisponibles ici');return}
+  try{const p=await Notification.requestPermission();if(p==='granted'){sendDigest(true);scheduleToday();toast('Rappels activés')}else toast('Notifications non autorisées')}catch(e){toast('Notifications indisponibles ici')}
+  render();
+}
+function clientMsg(r){const tm=shift(1);const quand=r.date===T?"aujourd'hui":r.date===tm?'demain':'le '+dLong(r.date);
+  return `Bonjour ${r.cliente}, petit rappel de votre rendez-vous ${quand} à ${r.heure.replace(':','h')} pour vos ${r.prestation} (${r.quartier}). À très vite ! Braids Style by LMA`}
 
 function renderAgenda(){
   const m=state.month,y=m.getFullYear(),mo=m.getMonth();
@@ -360,6 +410,8 @@ function render(){
   document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!=='v-'+state.tab);
   document.querySelectorAll('.tab').forEach(b=>{if(b.dataset.tab===state.tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   $('#demoNote').hidden=!db.demo;
+  const u=upcoming(),n=u.today.length+u.tomorrow.length,bd=$('#bellBadge');bd.textContent=n;bd.hidden=!n;
+  scheduleToday();
 }
 
 /* Feuille formulaire */
@@ -393,6 +445,7 @@ const need=(o,k,msg)=>{if(!o[k]){toast(msg);return false}return true};
 function rdvForm(r){
   const isNew=!r; r=r||{date:state.sel,heure:'09:00',cliente:'',tel:'',prestation:PRESTATIONS[0],quartier:'',prix:'',acompte:'',statut:'prevu'};
   const extra=[];
+  if(!isNew&&r.statut!=='fait')extra.push({label:'Copier le rappel cliente',run:o=>{const txt=clientMsg({...r,...o});try{navigator.clipboard.writeText(txt).then(()=>toast('Message copié, colle-le sur WhatsApp'),()=>toast('Copie impossible ici'))}catch(e){toast('Copie impossible ici')}}});
   if(!isNew&&r.statut!=='fait')extra.push({label:'Terminé → encaisser',cls:'good',run:o=>{Object.assign(r,o,{statut:'fait'});setTimeout(()=>txForm(null,{type:'entree',date:T,libelle:`${r.prestation} · ${r.cliente}`,cat:'Prestation',montant:r.prix,paye:r.prix}),0)}});
   if(!isNew)extra.push({label:'Supprimer',cls:'danger',confirm:true,run:()=>{db.rdv=db.rdv.filter(x=>x.id!==r.id);toast('Rendez-vous supprimé')}});
   openSheet({title:isNew?'Nouveau rendez-vous':'Rendez-vous',submit:isNew?'Ajouter':'Enregistrer',extra,fields:[
@@ -451,6 +504,8 @@ document.addEventListener('click',e=>{
   if(b=g('data-filter')){state.filter=b.dataset.filter;renderCaisse();return}
   if(b=g('data-new'))return txForm(null,{type:b.dataset.new,cat:b.dataset.new==='entree'?'Prestation':'Achat mèches'});
   if(b=g('data-inc')||g('data-dec')){const id=b.dataset.inc||b.dataset.dec;const s=db.stock.find(x=>x.id===id);s.qte=Math.max(0,s.qte+(b.dataset.inc?1:-1));save();render();return}
+  if(e.target.closest('#bellBtn')){state.tab='accueil';render();const h=$('#rappels');if(h)h.scrollIntoView({block:'start'});return}
+  if(e.target.closest('#notifBtn'))return enableNotif();
   if(e.target.closest('#addRdv'))return rdvForm();
   if(e.target.closest('#addSt'))return stForm();
   if(e.target.closest('#prevM')){state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1);renderAgenda();return}
@@ -459,5 +514,6 @@ document.addEventListener('click',e=>{
     db={demo:false,rdv:[],tx:[],stock:[]};save();r.dataset.armed='';r.textContent='Tout vider';render();toast('Prêt pour tes vraies données')}
 });
 render();
+sendDigest(false);
 })();
 </script>
