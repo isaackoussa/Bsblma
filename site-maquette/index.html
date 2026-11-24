@@ -792,20 +792,23 @@ function draw(){
   ctx.clearRect(0,0,W,H);if(!W||!H)return;
   const horiz=W>H*1.4,L=horiz?W:H,C=horiz?H:W;
   const thick=Math.min(horiz?C*.26:C*.1,30),A=Math.min(horiz?C*.3:C*.2,74)*amp,period=thick*6.2,step=3,mid=C/2;
-  // Chaque mèche est un tracé continu. On dessine d'abord les 3 mèches entières,
-  // puis on repasse uniquement les parties « devant » (bouts droits, sans couture visible).
-  // Aux croisements, une mèche est toujours devant et l'autre derrière : sin(2φ) change de signe.
-  const strands=[],fronts=[];
-  for(let i=0;i<3;i++){const pts=[];let cur=null;
-    for(let s=-60;s<=L+60;s+=step){const f=(s+phase)/period*2*Math.PI+i*2*Math.PI/3,z=Math.sin(2*f),c=mid+A*Math.sin(f),pt=horiz?[s,c]:[c,s];
-      pts.push(pt);
-      if(z>-0.12){if(!cur){cur={i,pts:[pts[pts.length-2]||pt]};fronts.push(cur)}cur.pts.push(pt)}else cur=null}
-    strands.push({i,pts})}
-  const path=r=>{ctx.beginPath();ctx.moveTo(r.pts[0][0],r.pts[0][1]);for(const p of r.pts)ctx.lineTo(p[0],p[1])};
-  const paint=(r,cap)=>{ctx.lineCap=cap;const o=cap==='butt'&&r.pts.length>6?{pts:r.pts.slice(2,-2)}:r;path(o);ctx.strokeStyle=OUTLINE;ctx.lineWidth=thick+4;ctx.stroke();path(r);ctx.strokeStyle=COLORS[r.i];ctx.lineWidth=thick;ctx.stroke()};
-  ctx.lineJoin='round';ctx.globalAlpha=1;
-  strands.forEach(r=>paint(r,'round'));
-  fronts.forEach(r=>paint(r,'butt'));
+  // Chaque mèche est découpée en petits segments (bandes) triés par profondeur :
+  // les plus éloignés d'abord, les plus proches ensuite. Seuls les bords latéraux ont un contour,
+  // donc aucune couture entre deux segments d'une même mèche.
+  const hw=thick/2,segs=[];
+  for(let i=0;i<3;i++){const P=[];
+    for(let s=-60;s<=L+60;s+=step){const f=(s+phase)/period*2*Math.PI+i*2*Math.PI/3;P.push({x:horiz?s:mid+A*Math.sin(f),y:horiz?mid+A*Math.sin(f):s,z:Math.sin(2*f)})}
+    for(let k=0;k<P.length;k++){const a=P[Math.max(0,k-1)],b=P[Math.min(P.length-1,k+1)];const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1;P[k].nx=-dy/l;P[k].ny=dx/l;P[k].tx=dx/l;P[k].ty=dy/l}
+    for(let k=0;k<P.length-1;k++)segs.push({i,a:P[k],b:P[k+1],z:(P[k].z+P[k+1].z)/2})}
+  segs.sort((u,v)=>u.z-v.z);
+  ctx.lineCap='butt';ctx.lineWidth=2;ctx.globalAlpha=1;
+  for(const g of segs){const a=g.a,b=g.b,e=.7;
+    const ax=a.x-a.tx*e,ay=a.y-a.ty*e,bx=b.x+b.tx*e,by=b.y+b.ty*e;
+    ctx.fillStyle=COLORS[g.i];ctx.beginPath();
+    ctx.moveTo(ax+a.nx*hw,ay+a.ny*hw);ctx.lineTo(bx+b.nx*hw,by+b.ny*hw);ctx.lineTo(bx-b.nx*hw,by-b.ny*hw);ctx.lineTo(ax-a.nx*hw,ay-a.ny*hw);ctx.closePath();ctx.fill();
+    ctx.strokeStyle=OUTLINE;ctx.beginPath();
+    ctx.moveTo(ax+a.nx*hw,ay+a.ny*hw);ctx.lineTo(bx+b.nx*hw,by+b.ny*hw);
+    ctx.moveTo(ax-a.nx*hw,ay-a.ny*hw);ctx.lineTo(bx-b.nx*hw,by-b.ny*hw);ctx.stroke()}
 }
 size();draw();route();
 new ResizeObserver(()=>{size();draw()}).observe(box);
