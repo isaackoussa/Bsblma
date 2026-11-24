@@ -792,18 +792,20 @@ function draw(){
   ctx.clearRect(0,0,W,H);if(!W||!H)return;
   const horiz=W>H*1.4,L=horiz?W:H,C=horiz?H:W;
   const thick=Math.min(horiz?C*.26:C*.1,30),A=Math.min(horiz?C*.3:C*.2,74)*amp,period=thick*6.2,step=3,mid=C/2;
-  const back=[],front=[];
-  for(let i=0;i<3;i++){let cur=null,side=null;
-    for(let s=-60;s<=L+60;s+=step){const f=(s+phase)/period*2*Math.PI+i*2*Math.PI/3;const z=Math.sin(2*f),c=mid+A*Math.sin(f);
-      const pt=horiz?[s,c]:[c,s],sd=z>=0;
-      if(sd!==side){if(cur){cur.pts.push(pt);(side?front:back).push(cur);cur={i,pts:[cur.pts[cur.pts.length-2]||pt,pt]}}else cur={i,pts:[pt]};side=sd}else cur.pts.push(pt)}
-    (side?front:back).push(cur)}
-  ctx.lineCap='round';ctx.lineJoin='round';
-  const stroke=(r,isBack)=>{ctx.beginPath();ctx.moveTo(r.pts[0][0],r.pts[0][1]);for(const p of r.pts)ctx.lineTo(p[0],p[1]);
-    ctx.globalAlpha=1;ctx.strokeStyle=OUTLINE;ctx.lineWidth=thick+4;ctx.stroke();
-    ctx.strokeStyle=COLORS[r.i];ctx.lineWidth=thick;ctx.stroke();
-  };
-  back.forEach(r=>stroke(r,true));front.forEach(r=>stroke(r,false));ctx.globalAlpha=1;
+  // Chaque mèche est un tracé continu. On dessine d'abord les 3 mèches entières,
+  // puis on repasse uniquement les parties « devant » (bouts droits, sans couture visible).
+  // Aux croisements, une mèche est toujours devant et l'autre derrière : sin(2φ) change de signe.
+  const strands=[],fronts=[];
+  for(let i=0;i<3;i++){const pts=[];let cur=null;
+    for(let s=-60;s<=L+60;s+=step){const f=(s+phase)/period*2*Math.PI+i*2*Math.PI/3,z=Math.sin(2*f),c=mid+A*Math.sin(f),pt=horiz?[s,c]:[c,s];
+      pts.push(pt);
+      if(z>-0.12){if(!cur){cur={i,pts:[pts[pts.length-2]||pt]};fronts.push(cur)}cur.pts.push(pt)}else cur=null}
+    strands.push({i,pts})}
+  const path=r=>{ctx.beginPath();ctx.moveTo(r.pts[0][0],r.pts[0][1]);for(const p of r.pts)ctx.lineTo(p[0],p[1])};
+  const paint=(r,cap)=>{ctx.lineCap=cap;const o=cap==='butt'&&r.pts.length>6?{pts:r.pts.slice(2,-2)}:r;path(o);ctx.strokeStyle=OUTLINE;ctx.lineWidth=thick+4;ctx.stroke();path(r);ctx.strokeStyle=COLORS[r.i];ctx.lineWidth=thick;ctx.stroke()};
+  ctx.lineJoin='round';ctx.globalAlpha=1;
+  strands.forEach(r=>paint(r,'round'));
+  fronts.forEach(r=>paint(r,'butt'));
 }
 size();draw();route();
 new ResizeObserver(()=>{size();draw()}).observe(box);
